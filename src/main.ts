@@ -1,14 +1,8 @@
 
 import Phaser from 'phaser';
 import { BehaviorTree } from './ai/base/BehaviorTree';
-import { Sequence } from "./Sequence";
-import throttle from './utils/throttle';
-import { Food } from './game/Food';
-import { MainGameScene } from './scenes/MainGameScene';
-import LightTemperatureFX from './ColorPostFXPipeline';
-import { GotoBranch } from './ai/utils/GotoBranch';
-import { LinearMotionTowardsPosition } from './ai/actions/LinearMotionTowardsPosition';
 import { RunningAction } from './ai/utils/RunningAction';
+import { MainGameScene } from './scenes/MainGameScene';
 
 
 export const rand = () => (Math.random() + Math.random() + Math.random()) / 3;
@@ -46,66 +40,59 @@ export function getMainScene() {
 
 
 export class LocalPlayer extends Phaser.Physics.Arcade.Image {
-  public health: number = 100;
-
   avatar: Phaser.GameObjects.Sprite;
   ai: BehaviorTree;
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'mario');
     this.avatar = scene.add.sprite(0, 0, 'generic-avatar', 'walk-0').setDepth(2).setDisplaySize(64, 64).setOrigin(0, 0);
 
-    this.avatar.anims.create({
-      key: 'walk-s',
-      frames: this.avatar.anims.generateFrameNames('generic-avatar', {
-        prefix: 'walk-',
-        start: 0,
-        end: 7,
-        suffix: '',
-        zeroPad: 0,
-      }),
-      duration: 1000 / 2,
-      repeat: -1,
-    });
+    const animDefs: { [key: string]: { start: number; end: number; prefix: string; } } = {
+      'walk-s': { start: 0, end: 7, prefix: 'walk-' },
+      'walk-n': { start: 8, end: 15, prefix: 'walk-' },
+      'walk-e': { start: 16, end: 23, prefix: 'walk-' },
+      'walk-w': { start: 24, end: 31, prefix: 'walk-' },
+      //
+      'axe-s': { start: 0, end: 4, prefix: 'axe-' },
+      'axe-n': { start: 5, end: 9, prefix: 'axe-' },
+      'axe-e': { start: 10, end: 14, prefix: 'axe-' },
+      'axe-w': { start: 15, end: 19, prefix: 'axe-' },
+      //
+      'hoe-s': { start: 0, end: 4, prefix: 'hoe-' },
+      'hoe-n': { start: 5, end: 9, prefix: 'hoe-' },
+      'hoe-e': { start: 10, end: 14, prefix: 'hoe-' },
+      'hoe-w': { start: 15, end: 19, prefix: 'hoe-' },
+      //
+      'sword-s': { start: 0, end: 3, prefix: 'sword-' },
+      'sword-n': { start: 4, end: 7, prefix: 'sword-' },
+      'sword-e': { start: 8, end: 11, prefix: 'sword-' },
+      'sword-w': { start: 12, end: 15, prefix: 'sword-' },
+      //
+      'water-s': { start: 0, end: 1, prefix: 'water-' },
+      'water-n': { start: 2, end: 3, prefix: 'water-' },
+      'water-e': { start: 4, end: 5, prefix: 'water-' },
+      'water-w': { start: 6, end: 7, prefix: 'water-' },
+      //
+      'idle-s': { start: 0, end: 0, prefix: 'walk-' },
+      'die': { start: 0, end: 1, prefix: 'die-' },
+    };
 
-    this.avatar.anims.create({
-      key: 'walk-n',
-      frames: this.avatar.anims.generateFrameNames('generic-avatar', {
-        prefix: 'walk-',
-        start: 8,
-        end: 15,
-        suffix: '',
-        zeroPad: 0,
-      }),
-      duration: 1000 / 2,
-      repeat: -1,
-    });
+    for (const key in animDefs) {
+      const { start, end, prefix } = animDefs[key];
+      this.avatar.anims.create({
+        key,
+        frames: this.avatar.anims.generateFrameNames('generic-avatar', {
+          prefix,
+          start,
+          end,
+          suffix: '',
+          zeroPad: 0,
+        }),
+        duration: 1000 / 2,
+        repeat: -1,
+      });
+    }
 
-    this.avatar.anims.create({
-      key: 'walk-e',
-      frames: this.avatar.anims.generateFrameNames('generic-avatar', {
-        prefix: 'walk-',
-        start: 16,
-        end: 23,
-        suffix: '',
-        zeroPad: 0,
-      }),
-      duration: 1000 / 2,
-      repeat: -1,
-    });
-
-    this.avatar.anims.create({
-      key: 'walk-w',
-      frames: this.avatar.anims.generateFrameNames('generic-avatar', {
-        prefix: 'walk-',
-        start: 24,
-        end: 31,
-        suffix: '',
-        zeroPad: 0,
-      }),
-      duration: 1000 / 2,
-      repeat: -1,
-    });
-
+    this.avatar.anims.play('idle-s');
     this.avatar.anims.create({
       key: 'axe-s',
       frames: this.avatar.anims.generateFrameNames('generic-avatar', {
@@ -358,68 +345,13 @@ export class LocalPlayer extends Phaser.Physics.Arcade.Image {
 
     this.avatar.setDepth(0);
 
-    const aMoveTree = (target: { x: number; y: number }) => new BehaviorTree(
-      new Sequence([
-        // new Sequence([
-        //   new IsTargetWithinDistance(this, target, 400),
-        //   new AccelerateTowardsPosition(this, target),
-        // ]),
-        new LinearMotionTowardsPosition(this, target),
-      ])
-    );
-
-    const normalMoveTree = (target: { x: number; y: number }) => new BehaviorTree(
-      new Sequence([
-        new LinearMotionTowardsPosition(this, target, 5, 220),
-        new GotoBranch(this, idleTree),
-      ])
-    );
-
-    const idleTree = new BehaviorTree(
-      new RunningAction(),
-    );
-
-    this.ai = idleTree;
-
-    const throttleChangeTHing = throttle((pointer: Phaser.Input.Pointer) => {
-      if (pointer.rightButtonDown()) {
-        // this.ai.abort();
-        this.ai = normalMoveTree({ x: pointer.worldX, y: pointer.worldY });
-      } //else if (pointer.leftButtonDown()) {
-      // this.ai.abort();
-      // this.ai = aMoveTree({ x: pointer.worldX, y: pointer.worldY });
-      // }
-    }, 1000 / 30);
-
-    const onPointerDown = throttleChangeTHing;
-
-    scene.input.on('pointerdown', onPointerDown);
-    scene.input.on('pointermove', onPointerDown);
-
-
     this.scene.physics.world.on('worldstep', () => {
       this.avatar.x = this.body.x;
       this.avatar.y = this.body.y;
       this.avatar.setDepth(this.avatar.y + (this.avatar.height * 0.75));
-
-      // if (this.body.velocity.x < 0.1 && this.body.velocity.x > -0.1
-      //   && this.body.velocity.y < 0.1 && this.body.velocity.y > -0.1) {
-      //     // this.avatar.anims.play('idle-s', true);
-      // } else if (Math.abs(this.body.velocity.x) > Math.abs(this.body.velocity.y)){
-      //   this.avatar.anims.play(
-      //     this.body.velocity.x > 0 ? 'walk-e' : 'walk-w',
-      //     true
-      //   )
-      // } else {
-      //   this.avatar.anims.play(
-      //     this.body.velocity.y < 0 ? 'walk-n' : 'walk-s',
-      //     true
-      //   )
-      // }
     });
+
+
+    this.avatar.setDepth(10);
   }
 }
-
-
-export class Item extends Phaser.Physics.Arcade.Image { }
-

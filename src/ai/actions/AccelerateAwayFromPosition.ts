@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { Action, BehaviorStatus } from './BehaviorTree';
+import { Action, BehaviorStatus } from '../base/BehaviorTree';
 
 
 

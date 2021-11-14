@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import Blackboard from './Blackboard';
+import Blackboard from '../base/Blackboard';
 
 
 

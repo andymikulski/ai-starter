@@ -1,4 +1,4 @@
-import { Behavior, BehaviorStatus, BehaviorTree } from './BehaviorTree';
+import { Behavior, BehaviorStatus, BehaviorTree } from '../base/BehaviorTree';
 import { Sequence } from "./Sequence";
 
 const IncrementalBehavior = class extends Behavior {

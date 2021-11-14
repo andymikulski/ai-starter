@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
-import { BehaviorStatus, Condition } from './BehaviorTree';
-import Blackboard from './Blackboard';
+import { BehaviorStatus, Condition } from '../base/BehaviorTree';
+import Blackboard from '../base/Blackboard';
 
 
 export class HasFoodNearby extends Condition {

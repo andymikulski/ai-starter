@@ -1,31 +1,27 @@
 import Phaser from 'phaser';
-import { BehaviorStatus, BehaviorTree } from './ai/base/BehaviorTree';
-import { FreshSequence, Sequence } from "./Sequence";
-import { ActiveSelector, Selector } from "./Selector";
-import { Item, LocalPlayer, rand } from './main';
-import { IncrementHealth } from "./IncrementHealth";
-import { SetAmmo } from "./ai/actions/SetAmmo";
-import { LinearMotionTowardsPosition } from "./ai/actions/LinearMotionTowardsPosition";
-import { AccelerateAwayFromPosition } from "./AccelerateAwayFromPosition";
-import { IsTargetWithinDistance } from "./IsTargetWithinDistance";
-import { SetEmote } from "./SetEmote";
-import { LoggingAction } from "./ai/utils/LoggingAction";
-import { WaitMillisecondsAction } from "./ai/utils/WaitMillisecondsAction";
-import { AdjustAmmoAction } from "./AdjustAmmoAction";
-import { CheckAmmoLevel } from "./ai/conditions/CheckAmmoLevel";
-import { Inverter } from "./ai/decorators/Inverter";
+import Blackboard from '../ai/base/Blackboard';
+import { BehaviorTree } from '../ai/base/BehaviorTree';
+import { FreshSequence, Sequence } from "../ai/base/Sequence";
+import { ActiveSelector, Selector } from "../ai/base/Selector";
+import { LocalPlayer, rand } from '../main';
+import { SetAmmo } from "../ai/actions/SetAmmo";
+import { LinearMotionTowardsPosition } from "../ai/actions/LinearMotionTowardsPosition";
+import { AccelerateAwayFromPosition } from "../ai/actions/AccelerateAwayFromPosition";
+import { IsTargetWithinDistance } from "../ai/conditions/IsTargetWithinDistance";
+import { SetEmote } from "../ai/actions/SetEmote";
+import { LoggingAction } from "../ai/utils/LoggingAction";
+import { WaitMillisecondsAction } from "../ai/utils/WaitMillisecondsAction";
+import { AdjustAmmoAction } from "../ai/actions/AdjustAmmoAction";
+import { CheckAmmoLevel } from "../ai/conditions/CheckAmmoLevel";
+import { Inverter } from "../ai/decorators/Inverter";
 import { SpawnProjectileBurst, SpawnSimpleProjectile } from './Projectile';
-import { GenericAction } from "./ai/utils/GenericAction";
-import { getClosestFood } from "./ai/queries/getClosestFood";
-import { HasFoodNearby } from "./HasFoodNearby";
-import Blackboard from './ai/base/Blackboard';
-import { Throttle, TomatoCrop } from './TomatoCrop';
-import { Falsy } from './ai/decorators/Falsy';
+import { getClosestFood } from "../ai/queries/getClosestFood";
+import { HasFoodNearby } from "../ai/conditions/HasFoodNearby";
+import { ThrottleDecorator } from "./ThrottleDecorator";
+import { Falsy } from '../ai/decorators/Falsy';
 
 
 export class Enemy extends Phaser.Physics.Arcade.Image {
-  inventory: Item[] = [];
-
   private _ammo: number = 3;
   public get ammo(): number {
     return this._ammo;
@@ -53,8 +49,6 @@ export class Enemy extends Phaser.Physics.Arcade.Image {
 
     this.ai = new BehaviorTree(
       new ActiveSelector([
-
-
         // Melee danger check
         new FreshSequence([
           new LoggingAction('\tEnemy: Is player within melee range?'),
@@ -65,12 +59,10 @@ export class Enemy extends Phaser.Physics.Arcade.Image {
           new AccelerateAwayFromPosition(this, player, 125)
         ]),
 
-
-        new Falsy(new Throttle(
+        new Falsy(new ThrottleDecorator(
           1_000,
           new SpawnProjectileBurst(this.scene, this.body?.position ?? this, 32),
         )),
-
 
         // Reload!
         new FreshSequence([
@@ -81,49 +73,28 @@ export class Enemy extends Phaser.Physics.Arcade.Image {
           new LinearMotionTowardsPosition(this, () => {
             return getClosestFood(this.blackboard, this.body?.position ?? this, 200);
           }, 10, 100, true),
-          // new LoggingAction('Chicken: Reached the food!'),
           new WaitMillisecondsAction(1000),
-          new GenericAction(() => {
-            const closestFood = getClosestFood(this.blackboard, this.body?.position ?? this, 10) as TomatoCrop | null;
-            if (!closestFood) { return BehaviorStatus.FAILURE; }
-            // Reset tomato plant
-            closestFood.ai.enabled = false;
-            closestFood.growthStage = 0;
-            closestFood.avatar.setTexture('env', 'TomatoSeeds');
+          // Set visual indicator
+          new SetEmote(this, 'drops'),
+          new LoggingAction('\tEnemy: Need to reload!'),
 
-            // This is bad, the plant itself should be responsible for handling being eaten
-            this.blackboard.removeObjectTags(['food'], closestFood);
-            setTimeout(() => {
-              closestFood.ai.enabled = true;
-            }, 5000);
-            return BehaviorStatus.SUCCESS;
-          }),
-          new SetEmote(this, 'faceHappy'),
-          // new LoggingAction('Chicken: FOOD ANNIHIALIATED'),
-          new SetAmmo(this, 3),
-          new WaitMillisecondsAction(250),
-
-          // // Set visual indicator
-          // new SetEmote(this, 'drops'),
-          // new LoggingAction('\tEnemy: Need to reload!'),
-
-          // // Reload
-          // new Selector([
-          //   // Check if it's safe to reload (or move away from the player if too close)
-          //   new Sequence([
-          //     new IsTargetWithinDistance(this.body?.position ?? this, player.body, 160),
-          //     new SetEmote(this, 'alert'),
-          //     new LoggingAction('\tEnemy: Player is too close, running away first!'),
-          //     new AccelerateAwayFromPosition(this, player, 200)
-          //   ]),
-          //   // Actually reload weapon
-          //   new Sequence([
-          //     new LoggingAction('\tEnemy: Reloading!'),
-          //     new WaitMillisecondsAction(500),
-          //     new SetAmmo(this, 3),
-          //     new LoggingAction('\tEnemy: I have ammo!'),
-          //   ])
-          // ])
+          // Reload
+          new Selector([
+            // Check if it's safe to reload (or move away from the player if too close)
+            new Sequence([
+              new IsTargetWithinDistance(this.body?.position ?? this, player.body, 160),
+              new SetEmote(this, 'alert'),
+              new LoggingAction('\tEnemy: Player is too close, running away first!'),
+              new AccelerateAwayFromPosition(this, player, 200)
+            ]),
+            // Actually reload weapon
+            new Sequence([
+              new LoggingAction('\tEnemy: Reloading!'),
+              new WaitMillisecondsAction(500),
+              new SetAmmo(this, 3),
+              new LoggingAction('\tEnemy: I have ammo!'),
+            ])
+          ])
         ]),
 
         // Is a player nearby? If so run towards them so they are within attacking range

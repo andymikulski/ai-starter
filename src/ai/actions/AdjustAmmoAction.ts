@@ -1,4 +1,4 @@
-import { Action, BehaviorStatus } from './BehaviorTree';
+import { Action, BehaviorStatus } from '../base/BehaviorTree';
 
 
 export class AdjustAmmoAction extends Action {

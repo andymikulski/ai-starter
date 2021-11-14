@@ -1,4 +1,4 @@
-import { BehaviorStatus, Decorator } from '../ai/base/BehaviorTree';
+import { BehaviorStatus, Decorator } from '../base/BehaviorTree';
 
 
 export class AlwaysFail extends Decorator {

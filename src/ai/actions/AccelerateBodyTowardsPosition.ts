@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { Action, BehaviorStatus } from './BehaviorTree';
+import { Action, BehaviorStatus } from '../base/BehaviorTree';
 
 class AccelerateBodyTowardsPosition extends Action {
   constructor(private self: Phaser.Physics.Arcade.Image, private target: { x: number; y: number; }, private range: number = 100) {

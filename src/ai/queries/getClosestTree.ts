@@ -1,6 +1,5 @@
 import Phaser from 'phaser';
-import Blackboard from './Blackboard';
-
+import Blackboard from '../base/Blackboard';
 
 
 export const getClosestTree = (blackboard: Blackboard, position: { x: number; y: number; }, maxDistance: number): null | Phaser.GameObjects.Components.Transform => {

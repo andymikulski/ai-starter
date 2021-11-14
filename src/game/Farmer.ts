@@ -1,30 +1,19 @@
 import Phaser from 'phaser';
-import { BehaviorStatus, BehaviorTree } from './ai/base/BehaviorTree';
-import { FreshSequence, Sequence } from "./Sequence";
-import { ActiveSelector, Selector } from "./Selector";
-import { Item, LocalPlayer, rand } from './main';
-import { IncrementHealth } from "./IncrementHealth";
-import { SetAmmo } from "./ai/actions/SetAmmo";
-import { LinearMotionTowardsPosition } from "./ai/actions/LinearMotionTowardsPosition";
-import { SetAnimationSpeed } from "./SetAnimationSpeed";
-import { SetAnimation } from "./SetAnimation";
-import { AccelerateAwayFromPosition } from "./AccelerateAwayFromPosition";
-import { IsTargetWithinDistance } from "./IsTargetWithinDistance";
-import { SetEmote } from "./SetEmote";
-import { LoggingAction } from "./ai/utils/LoggingAction";
-import { WaitMillisecondsAction } from "./ai/utils/WaitMillisecondsAction";
-import { AdjustAmmoAction } from "./AdjustAmmoAction";
-import { CheckAmmoLevel } from "./ai/conditions/CheckAmmoLevel";
-import { Inverter } from "./ai/decorators/Inverter";
-import { SpawnProjectileBurst, SpawnSimpleProjectile } from './Projectile';
-import { GenericAction } from "./ai/utils/GenericAction";
-import { getClosestFood } from "./ai/queries/getClosestFood";
-import { HasFoodNearby } from "./HasFoodNearby";
-import Blackboard from './ai/base/Blackboard';
-import { Throttle, TomatoCrop } from './TomatoCrop';
-import { ActualTree } from './ActualTree';
-import PoissonNeighborhood from './NeighborhoodGenerator';
-import { RandomSelector } from './ai/utils/RandomSelector';
+import { BehaviorStatus, BehaviorTree } from '../ai/base/BehaviorTree';
+import { FreshSequence } from "../ai/base/Sequence";
+import { ActiveSelector } from "../ai/base/Selector";
+import { LocalPlayer, rand } from '../main';
+import { LinearMotionTowardsPosition } from "../ai/actions/LinearMotionTowardsPosition";
+import { SetAnimation } from "../ai/actions/SetAnimation";
+import { AccelerateAwayFromPosition } from "../ai/actions/AccelerateAwayFromPosition";
+import { IsTargetWithinDistance } from "../ai/conditions/IsTargetWithinDistance";
+import { LoggingAction } from "../ai/utils/LoggingAction";
+import { WaitMillisecondsAction } from "../ai/utils/WaitMillisecondsAction";
+import { GenericAction } from "../ai/utils/GenericAction";
+import { getClosestFood } from "../ai/queries/getClosestFood";
+import { HasFoodNearby } from "../ai/conditions/HasFoodNearby";
+import Blackboard from '../ai/base/Blackboard';
+import { TomatoCrop } from './TomatoCrop';
 
 
 export class Farmer extends Phaser.Physics.Arcade.Image {

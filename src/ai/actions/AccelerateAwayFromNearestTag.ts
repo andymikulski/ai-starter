@@ -1,8 +1,7 @@
 import Phaser from 'phaser';
 import { Action, BehaviorStatus } from '../base/BehaviorTree';
 import Blackboard from '../base/Blackboard';
-import { GetClosestTaggedObject } from '../../GetClosestTaggedObject';
-
+import { GetClosestTaggedObject } from '../queries/GetClosestTaggedObject';
 
 export class AccelerateAwayFromNearestTag extends Action {
   constructor(private self: Phaser.Physics.Arcade.Image, private tag: string, private targetDist: number = 100, private speed: number = 125, private blackboard: Blackboard) {

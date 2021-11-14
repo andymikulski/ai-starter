@@ -1,23 +1,11 @@
 import Phaser from 'phaser';
-import { Action, Behavior, BehaviorStatus, BehaviorTree, Condition, Decorator } from '../ai/base/BehaviorTree';
-import { FreshSequence, Sequence } from "./Sequence";
-import { ActiveSelector, Selector } from "./Selector";
-import { Item, LocalPlayer, rand } from '../main';
-import { IncrementHealth } from "../ai/actions/IncrementHealth";
-import { SetAmmo } from "../ai/actions/SetAmmo";
-import { LinearMotionTowardsPosition } from "../ai/actions/LinearMotionTowardsPosition";
-import { SetAnimationSpeed } from "./SetAnimationSpeed";
-import { AccelerateAwayFromPosition } from "./AccelerateAwayFromPosition";
-import { IsTargetWithinDistance } from "./IsTargetWithinDistance";
-import { IsTargetActivelyMoving } from "./IsTargetActivelyMoving";
-import { SetEmote } from "./SetEmote";
-import { LoggingAction } from "../ai/utils/LoggingAction";
+import { BehaviorStatus, BehaviorTree, Condition } from '../ai/base/BehaviorTree';
+import { FreshSequence } from "../ai/base/Sequence";
+import { ActiveSelector } from "../ai/base/Selector";
 import { WaitMillisecondsAction } from "../ai/utils/WaitMillisecondsAction";
-import { AdjustAmmoAction } from "./AdjustAmmoAction";
-import { CheckAmmoLevel } from "../ai/conditions/CheckAmmoLevel";
 import { Inverter } from "../ai/decorators/Inverter";
 import Blackboard from '../ai/base/Blackboard';
-import { AddObjectTagToBlackboard, HasSunlight, RemoveObjectTagFromBlackboard, SetTextureAction } from '../TomatoCrop';
+import { AddObjectTagToBlackboard, HasSunlight, RemoveObjectTagFromBlackboard, SetTextureAction } from './TomatoCrop';
 
 
 export class IsTreeFullyGrown extends Condition {
@@ -39,7 +27,7 @@ class GoToNextGrowthStage extends Condition {
   }
 }
 
-enum TreeGrowthStatus {
+export enum TreeGrowthStatus {
   Chopped,
   Grown,
 }

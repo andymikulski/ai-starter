@@ -1,9 +1,8 @@
 import Phaser from 'phaser';
-import { Action, BehaviorStatus, BehaviorTree } from './ai/base/BehaviorTree';
-import { getMainScene } from './main';
-import { LinearMotionTowardsPosition } from "./ai/actions/LinearMotionTowardsPosition";
-import { LinearMotionTowardsDirection } from "./LinearMotionTowardsDirection";
-import { Sequence } from './Sequence';
+import { Action, BehaviorStatus, BehaviorTree } from '../ai/base/BehaviorTree';
+import { getMainScene } from '../main';
+import { LinearMotionTowardsDirection } from "../ai/actions/LinearMotionTowardsDirection";
+import { Sequence } from '../ai/base/Sequence';
 
 
 

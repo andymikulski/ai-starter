@@ -6,7 +6,7 @@ export class BehaviorTree {
   public set enabled(v: boolean) {
     this._enabled = v;
   }
-
+  
   constructor(private rootNode: Behavior) { }
   tick() {
     if (!this.enabled) {
@@ -18,7 +18,7 @@ export class BehaviorTree {
     return this.rootNode.abort?.();
   }
 
-  setRootNode(node:Behavior) {
+  setRootNode(node: Behavior) {
     this.rootNode?.abort?.();
     this.rootNode = node;
   }

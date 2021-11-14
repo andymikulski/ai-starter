@@ -1,38 +1,17 @@
 import Phaser from 'phaser';
-import { BehaviorStatus, BehaviorTree, Condition, Decorator } from '../ai/base/BehaviorTree';
-import { FreshSequence, Sequence } from "./Sequence";
-import { ActiveSelector, Selector } from "./Selector";
-import { Item, LocalPlayer, rand } from '../main';
-import { IncrementHealth } from "../ai/actions/IncrementHealth";
-import { SetAmmo } from "../ai/actions/SetAmmo";
+import { BehaviorStatus, BehaviorTree, Condition } from '../ai/base/BehaviorTree';
+import { FreshSequence } from "../ai/base/Sequence";
+import { ActiveSelector } from "../ai/base/Selector";
+import { LocalPlayer, rand } from '../main';
 import { LinearMotionTowardsPosition } from "../ai/actions/LinearMotionTowardsPosition";
-import { SetAnimationSpeed } from "./SetAnimationSpeed";
-import { SetAnimation } from "./SetAnimation";
-import { AccelerateAwayFromPosition } from "./AccelerateAwayFromPosition";
-import { IsTargetWithinDistance } from "./IsTargetWithinDistance";
-import { SetEmote } from "./SetEmote";
+import { SetAnimation } from "../ai/actions/SetAnimation";
+import { AccelerateAwayFromPosition } from "../ai/actions/AccelerateAwayFromPosition";
+import { IsTargetWithinDistance } from "../ai/conditions/IsTargetWithinDistance";
 import { LoggingAction } from "../ai/utils/LoggingAction";
 import { WaitMillisecondsAction } from "../ai/utils/WaitMillisecondsAction";
-import { AdjustAmmoAction } from "./AdjustAmmoAction";
-import { CheckAmmoLevel } from "../ai/conditions/CheckAmmoLevel";
-import { Inverter } from "../ai/decorators/Inverter";
-import { SpawnProjectileBurst, SpawnSimpleProjectile } from './Projectile';
 import { GenericAction } from "../ai/utils/GenericAction";
-import { getClosestFood } from "../ai/queries/getClosestFood";
-import { HasFoodNearby } from "./HasFoodNearby";
 import Blackboard from '../ai/base/Blackboard';
-import { Throttle, TomatoCrop } from './TomatoCrop';
 import { ActualTree } from './ActualTree';
-import PoissonNeighborhood from './NeighborhoodGenerator';
-import { RandomSelector } from './ai/utils/RandomSelector';
-
-
-export class Falsy extends Decorator {
-  update() {
-    const status = this.child.tick();
-    return status === BehaviorStatus.SUCCESS ? BehaviorStatus.SUCCESS : BehaviorStatus.FAILURE;
-  }
-}
 
 
 export class HasTreeNearby extends Condition {
@@ -116,18 +95,7 @@ export class Woodsman extends Phaser.Physics.Arcade.Image {
             return this.numLogsCollected >= 3 ? BehaviorStatus.SUCCESS : BehaviorStatus.FAILURE;
           }),
           new SetAnimation(this.avatar, 'walk-s'),
-          new LinearMotionTowardsPosition(this, () => {
-            const pts = (this.blackboard.get('neighborhood') as PoissonNeighborhood).getEnds();
-
-            const pt = pts[(Math.random() * pts.length) | 0];
-            // const pt = pts[(Math.random() * pts.length) | 0];
-            // this.scene.add.rectangle(pt[0], pt[1], 32, 32, 0xff0000, 0.9).setDepth(10000);
-
-            if (!pt) { return { x: NaN, y: NaN }; }
-
-            return { x: pt[0], y: pt[1] };
-          }, 20, 75),
-          // new LinearMotionTowardsPosition(this, () => ({ x: Math.random() * this.scene.scale.width, y: Math.random() * this.scene.scale.height }), 20, 150),
+          new LinearMotionTowardsPosition(this, () => ({ x: Math.random() * this.scene.scale.width, y: Math.random() * this.scene.scale.height }), 20, 150),
           new SetAnimation(this.avatar, 'sword-e'),
           new GenericAction(() => {
             this.numLogsCollected = 0;
@@ -224,115 +192,6 @@ export class Woodsman extends Phaser.Physics.Arcade.Image {
       this.numLogsCollectedDisplay.y = this.body.y - 15;
     });
   }
-
-  // private defineSpriteAnimations() {
-  //   this.avatar.anims.create({
-  //     key: 'idle-s',
-  //     frames: this.avatar.anims.generateFrameNames('spritesheet', {
-  //       prefix: 'Blacksmith_idle-',
-  //       start: 0,
-  //       end: 3,
-  //       suffix: '',
-  //       zeroPad: 0,
-  //     }),
-  //     duration: 1000 / 1,
-  //     repeat: -1,
-  //   });
-
-
-  //   this.avatar.anims.create({
-  //     key: 'idle-w',
-  //     frames: this.avatar.anims.generateFrameNames('spritesheet', {
-  //       prefix: 'Blacksmith_idle-',
-  //       start: 4,
-  //       end: 7,
-  //       suffix: '',
-  //       zeroPad: 0,
-  //     }),
-  //     duration: 1000 / 1,
-  //     repeat: -1,
-  //   });
-
-  //   this.avatar.anims.create({
-  //     key: 'idle-e',
-  //     frames: this.avatar.anims.generateFrameNames('spritesheet', {
-  //       prefix: 'Blacksmith_idle-',
-  //       start: 8,
-  //       end: 11,
-  //       suffix: '',
-  //       zeroPad: 0,
-  //     }),
-  //     duration: 1000 / 1,
-  //     repeat: -1,
-  //   });
-
-  //   this.avatar.anims.create({
-  //     key: 'idle-n',
-  //     frames: this.avatar.anims.generateFrameNames('spritesheet', {
-  //       prefix: 'Blacksmith_idle-',
-  //       start: 12,
-  //       end: 15,
-  //       suffix: '',
-  //       zeroPad: 0,
-  //     }),
-  //     duration: 1000 / 1,
-  //     repeat: -1,
-  //   });
-
-
-  //   this.avatar.anims.create({
-  //     key: 'walk-s',
-  //     frames: this.avatar.anims.generateFrameNames('spritesheet', {
-  //       prefix: 'Blacksmith_walk-',
-  //       start: 0,
-  //       end: 3,
-  //       suffix: '',
-  //       zeroPad: 0,
-  //     }),
-  //     duration: 1000 / 1,
-  //     repeat: -1,
-  //   });
-
-
-  //   this.avatar.anims.create({
-  //     key: 'walk-w',
-  //     frames: this.avatar.anims.generateFrameNames('spritesheet', {
-  //       prefix: 'Blacksmith_walk-',
-  //       start: 4,
-  //       end: 7,
-  //       suffix: '',
-  //       zeroPad: 0,
-  //     }),
-  //     duration: 1000 / 1,
-  //     repeat: -1,
-  //   });
-
-  //   this.avatar.anims.create({
-  //     key: 'walk-e',
-  //     frames: this.avatar.anims.generateFrameNames('spritesheet', {
-  //       prefix: 'Blacksmith_walk-',
-  //       start: 8,
-  //       end: 11,
-  //       suffix: '',
-  //       zeroPad: 0,
-  //     }),
-  //     duration: 1000 / 1,
-  //     repeat: -1,
-  //   });
-
-  //   this.avatar.anims.create({
-  //     key: 'walk-n',
-  //     frames: this.avatar.anims.generateFrameNames('spritesheet', {
-  //       prefix: 'Blacksmith_walk-',
-  //       start: 12,
-  //       end: 15,
-  //       suffix: '',
-  //       zeroPad: 0,
-  //     }),
-  //     duration: 1000 / 1,
-  //     repeat: -1,
-  //   });
-  // }
 
   private defineSpriteAnimations() {
     this.avatar.anims.create({

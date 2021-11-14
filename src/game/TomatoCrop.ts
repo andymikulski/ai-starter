@@ -1,50 +1,15 @@
 import Phaser from 'phaser';
-import { Action, Behavior, BehaviorStatus, BehaviorTree, Condition, Decorator } from './ai/base/BehaviorTree';
-import { FreshSequence, Sequence } from "./Sequence";
-import { ActiveSelector, Selector } from "./Selector";
-import { Item, LocalPlayer, rand } from './main';
-import { IncrementHealth } from "./IncrementHealth";
-import { SetAmmo } from "./ai/actions/SetAmmo";
-import { LinearMotionTowardsPosition } from "./ai/actions/LinearMotionTowardsPosition";
-import { SetAnimationSpeed } from "./SetAnimationSpeed";
-import { AccelerateAwayFromPosition } from "./AccelerateAwayFromPosition";
-import { IsTargetWithinDistance } from "./IsTargetWithinDistance";
-import { IsTargetActivelyMoving } from "./IsTargetActivelyMoving";
-import { SetEmote } from "./SetEmote";
-import { LoggingAction } from "./ai/utils/LoggingAction";
-import { WaitMillisecondsAction } from "./ai/utils/WaitMillisecondsAction";
-import { AdjustAmmoAction } from "./AdjustAmmoAction";
-import { CheckAmmoLevel } from "./ai/conditions/CheckAmmoLevel";
-import { Inverter } from "./ai/decorators/Inverter";
-import Blackboard from './ai/base/Blackboard';
-import { AlwaysFail } from "./game/AlwaysFail";
-
-export class FailingAction extends Action {
-  update() {
-    return BehaviorStatus.FAILURE;
-  }
-}
-
-export class Throttle extends Decorator {
-  constructor(private throttleMs: number, child: Behavior , private throttledStatus:BehaviorStatus = BehaviorStatus.RUNNING) { super(child); }
-
-  private lastTime: number;
-  onInitialize() {
-    super.onInitialize();
-    this.lastTime = Date.now();
-  }
-  update() {
-    super.update();
-    const now = Date.now();
-    return (now - this.lastTime < this.throttleMs) ? this.throttledStatus : this.child.tick();
-  }
-}
-
+import { Action, BehaviorStatus, BehaviorTree, Condition } from '../ai/base/BehaviorTree';
+import { FreshSequence } from "../ai/base/Sequence";
+import { ActiveSelector } from "../ai/base/Selector";
+import { WaitMillisecondsAction } from "../ai/utils/WaitMillisecondsAction";
+import Blackboard from '../ai/base/Blackboard';
+import { AlwaysFail } from "../ai/decorators/AlwaysFail";
 
 export class HasSunlight extends Condition {
   constructor(private blackboard: Blackboard) { super(); }
   update() {
-    return this.blackboard.get<boolean>('hasDaylight', false) ? BehaviorStatus.SUCCESS : BehaviorStatus.FAILURE;
+    return this.blackboard.get<boolean>('hasDaylight', true) ? BehaviorStatus.SUCCESS : BehaviorStatus.FAILURE;
   }
 }
 
@@ -148,18 +113,8 @@ export class TomatoCrop extends Phaser.Physics.Arcade.Image {
           new IsFullyGrown(this),
           new AddObjectTagToBlackboard(this, this.blackboard, ['food']),
         ])
-        // new Sequence([
-        //   // new FailingAction(),
-        //   new IsFullyGrown(this),
-        //   new WaitMillisecondsAction(() => 100 + (Math.random() * 500)),
-        //   new RemoveObjectTagFromBlackboard(this, this.blackboard, ['food']),
-        //   new ResetGrowthStage(this),
-        //   new UpdateTomatoPlantTexture(this, this.avatar),
-        //   new WaitMillisecondsAction(() => 100 + (Math.random() * 500)),
-        // ])
       ])
     );
-
 
     // Align the emote stuff with the physics body
     this.scene.physics.world.on('worldstep', () => {
