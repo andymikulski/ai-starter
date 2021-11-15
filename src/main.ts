@@ -1,5 +1,4 @@
 import Phaser from "phaser";
-import { RunningAction } from "./ai/utils/RunningAction";
 import { MainGameScene } from "./scenes/MainGameScene";
 
 export const rand = () => (Math.random() + Math.random() + Math.random()) / 3;

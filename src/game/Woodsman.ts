@@ -127,6 +127,7 @@ export class Woodsman extends Phaser.Physics.Arcade.Image {
             player.body,
             75
           ),
+          new SetAnimation(this.avatar, "walk-s"),
           new AccelerateAwayFromPosition(this, player, 125),
         ]),
 
@@ -320,4 +321,6 @@ export class Woodsman extends Phaser.Physics.Arcade.Image {
     }
     this.avatar.anims.play("idle-s");
   }
+
+  preUpdate = () => {};
 }

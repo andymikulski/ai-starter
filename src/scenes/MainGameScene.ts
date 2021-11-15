@@ -173,17 +173,18 @@ export class MainGameScene extends Phaser.Scene {
           this.aiBlackboard
         ).setDepth(10);
       }
+      if (npc) {
+        this.sys.updateList.add(npc);
 
-      this.sys.updateList.add(npc);
-
-      this.physics.add
-        .existing(npc)
-        .setCollideWorldBounds(true)
-        .setMaxVelocity(75, 75)
-        .setImmovable(false)
-        .setPushable(true);
-      this.registerBehavior(npc);
-      this.aiBlackboard.tagObject(["humanoid"], npc);
+        this.physics.add
+          .existing(npc)
+          .setCollideWorldBounds(true)
+          .setMaxVelocity(75, 75)
+          .setImmovable(false)
+          .setPushable(true);
+        this.registerBehavior(npc);
+        this.aiBlackboard.tagObject(["humanoid"], npc);
+      }
     }
 
     this.time.addEvent({
@@ -194,8 +195,6 @@ export class MainGameScene extends Phaser.Scene {
       loop: true,
       callback: this.updateLocalAgent,
     });
-
-    (window as any).step = this.updateAI;
   };
 
   update = (time: number, delta: number) => {
