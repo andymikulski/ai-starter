@@ -1,8 +1,7 @@
-import { Action, BehaviorStatus } from '../base/BehaviorTree';
-
+import { Action, BehaviorStatus } from "../base/BehaviorTree";
 
 export class IncrementHealth extends Action {
-  constructor(private entity: { health: number; }, private amount: number) {
+  constructor(private entity: { health: number }, private amount: number) {
     super();
   }
   onInitialize() {
@@ -13,4 +12,3 @@ export class IncrementHealth extends Action {
     return BehaviorStatus.SUCCESS;
   }
 }
-;

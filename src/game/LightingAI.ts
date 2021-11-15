@@ -3,7 +3,6 @@
 // import { LocalPlayer } from '../main';
 // import Blackboard from '../ai/base/Blackboard';
 
-
 // class GrowFog extends Action {
 //   constructor(private self: NightFog, private blackboard: Blackboard) { super(); }
 //   update() {

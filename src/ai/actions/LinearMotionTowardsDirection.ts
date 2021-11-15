@@ -1,19 +1,24 @@
-import Phaser from 'phaser';
-import { Action, BehaviorStatus } from '../base/BehaviorTree';
-
-
+import Phaser from "phaser";
+import { Action, BehaviorStatus } from "../base/BehaviorTree";
 
 export class LinearMotionTowardsDirection extends Action {
   private currentAngle: number = 0;
 
-  constructor(private self: Phaser.Physics.Arcade.Image, private givenAngle: number | (() => number), private speed: number = 150) {
+  constructor(
+    private self: Phaser.Physics.Arcade.Image,
+    private givenAngle: number | (() => number),
+    private speed: number = 150
+  ) {
     super();
 
     this.updateAngle();
   }
 
   private updateAngle() {
-    this.currentAngle = typeof this.givenAngle === 'function' ? this.givenAngle() : this.givenAngle;
+    this.currentAngle =
+      typeof this.givenAngle === "function"
+        ? this.givenAngle()
+        : this.givenAngle;
   }
 
   onInitialize() {
@@ -26,7 +31,10 @@ export class LinearMotionTowardsDirection extends Action {
     if (isNaN(this.currentAngle)) {
       return BehaviorStatus.FAILURE;
     }
-    this.self.body.velocity.set(Math.cos(this.currentAngle) * this.speed, Math.sin(this.currentAngle) * this.speed);
+    this.self.body.velocity.set(
+      Math.cos(this.currentAngle) * this.speed,
+      Math.sin(this.currentAngle) * this.speed
+    );
     return BehaviorStatus.RUNNING;
   }
 
@@ -35,4 +43,3 @@ export class LinearMotionTowardsDirection extends Action {
     this.self.body.velocity.set(0, 0);
   }
 }
-;

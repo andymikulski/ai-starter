@@ -1,4 +1,4 @@
-import { Action, BehaviorStatus } from '../base/BehaviorTree';
+import { Action, BehaviorStatus } from "../base/BehaviorTree";
 
 export class RunningAction extends Action {
   constructor() {
@@ -8,4 +8,3 @@ export class RunningAction extends Action {
     return BehaviorStatus.RUNNING;
   }
 }
-;

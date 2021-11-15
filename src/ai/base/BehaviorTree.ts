@@ -6,8 +6,8 @@ export class BehaviorTree {
   public set enabled(v: boolean) {
     this._enabled = v;
   }
-  
-  constructor(private rootNode: Behavior) { }
+
+  constructor(private rootNode: Behavior) {}
   tick() {
     if (!this.enabled) {
       return BehaviorStatus.FAILURE;
@@ -25,10 +25,10 @@ export class BehaviorTree {
 }
 
 export enum BehaviorStatus {
-  RUNNING = 'RUNNING',
-  SUCCESS = 'SUCCESS',
-  FAILURE = 'FAILURE',
-  ERROR = 'ERROR'
+  RUNNING = "RUNNING",
+  SUCCESS = "SUCCESS",
+  FAILURE = "FAILURE",
+  ERROR = "ERROR",
 }
 
 export abstract class Behavior {
@@ -62,7 +62,7 @@ export abstract class Behavior {
     this.isRunning = true;
     this.shouldAbort = false;
     this.status = undefined;
-  };
+  }
   // Called _once_ each time the BT is updated.
   public update(): BehaviorStatus {
     if (this.shouldAbort) {
@@ -85,7 +85,7 @@ export abstract class Behavior {
     this.isRunning = false;
     this.isTerminated = true;
     this.shouldAbort = false;
-  };
+  }
 
   public tick() {
     if (this.shouldAbort) {
@@ -115,13 +115,11 @@ export abstract class Behavior {
 // `Action`s are leaf nodes that have the responsibility of accessing info from the world,
 // as well as making _changes_ to the world.
 
-
 // Conditions are leaf nodes which check information in the world and return a boolean result,
 // as they rely on the return statuses of behaviors (success/failure).
 
-export abstract class Condition extends Behavior { }
-export abstract class Action extends Behavior { }
-
+export abstract class Condition extends Behavior {}
+export abstract class Action extends Behavior {}
 
 export abstract class Decorator extends Behavior {
   constructor(protected child: Behavior) {
@@ -132,26 +130,23 @@ export abstract class Decorator extends Behavior {
   // }
 }
 
-
-
 // Composites are branches with multiple behaviors
 
 export abstract class Composite extends Behavior {
-  constructor(protected children: Behavior[] = []) { super(); };
+  constructor(protected children: Behavior[] = []) {
+    super();
+  }
 
   addChild = (behavior: Behavior) => {
     this.children.push(behavior);
-  }
+  };
   removeChild = (behavior: Behavior) => {
-    this.children = this.children.filter(b => b !== behavior);
-  }
+    this.children = this.children.filter((b) => b !== behavior);
+  };
   clearChildren = () => {
     this.children = [];
-  }
+  };
   getChildren = () => {
     return this.children;
-  }
+  };
 }
-
-
-

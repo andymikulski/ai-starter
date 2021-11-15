@@ -65,10 +65,10 @@
         ],
         "quotemark": [
             true,
-            "single"
+            "double"
         ],
         "semicolon": [
-            true,
+            false,
             "always"
         ],
         "triple-equals": [

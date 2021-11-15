@@ -1,11 +1,12 @@
-import Phaser from 'phaser';
-import { Action, BehaviorStatus } from '../base/BehaviorTree';
-
-
-
+import Phaser from "phaser";
+import { Action, BehaviorStatus } from "../base/BehaviorTree";
 
 export class SetAnimation extends Action {
-  constructor(private self: Phaser.GameObjects.Sprite, private animationKey: string, private ignoreIfAlreadyPlaying = true) {
+  constructor(
+    private self: Phaser.GameObjects.Sprite,
+    private animationKey: string,
+    private ignoreIfAlreadyPlaying = true
+  ) {
     super();
   }
   update() {

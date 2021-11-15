@@ -1,4 +1,6 @@
-export type BlackboardObj = Phaser.GameObjects.Components.Transform | Phaser.GameObjects.GameObject;
+export type BlackboardObj =
+  | Phaser.GameObjects.Components.Transform
+  | Phaser.GameObjects.GameObject;
 
 export default class Blackboard {
   private data: { [key: string]: any } = {};
@@ -6,7 +8,7 @@ export default class Blackboard {
     this.data[key] = value;
   };
   public get = <T>(key: string, fallback?: T): T | null => {
-    return this.data[key] as T ?? (fallback ?? null);
+    return (this.data[key] as T) ?? fallback ?? null;
   };
 
   private taggedObjects: { [tag: string]: BlackboardObj[] } = {};
@@ -22,10 +24,14 @@ export default class Blackboard {
 
   public removeObjectTags = (tags: string[], gameObject: BlackboardObj) => {
     let tag;
-    for(let i = 0; i < tags.length; i++){
+    for (let i = 0; i < tags.length; i++) {
       tag = tags[i];
-      if (!this.taggedObjects[tag]){ continue; }
-      this.taggedObjects[tag] = this.taggedObjects[tag].filter(x => x !== gameObject);
+      if (!this.taggedObjects[tag]) {
+        continue;
+      }
+      this.taggedObjects[tag] = this.taggedObjects[tag].filter(
+        (x) => x !== gameObject
+      );
     }
   };
 

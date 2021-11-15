@@ -1,10 +1,11 @@
-import Phaser from 'phaser';
-import Blackboard from '../base/Blackboard';
+import Phaser from "phaser";
+import Blackboard from "../base/Blackboard";
 
-
-
-
-export const GetClosestTaggedObject = (blackboard: Blackboard, pos: { x: number; y: number; }, tag: string) => {
+export const GetClosestTaggedObject = (
+  blackboard: Blackboard,
+  pos: { x: number; y: number },
+  tag: string
+) => {
   const found = blackboard.getTagged(tag) as any[];
   if (!found.length) {
     return null;
@@ -17,12 +18,14 @@ export const GetClosestTaggedObject = (blackboard: Blackboard, pos: { x: number;
     foundPos = found[i].body?.position ?? found[i];
 
     const dist = Phaser.Math.Distance.Between(
-      pos.x, pos.y,
-      foundPos.x, foundPos.y
+      pos.x,
+      pos.y,
+      foundPos.x,
+      foundPos.y
     );
     if (dist < smallestDist) {
       closest = found[i];
     }
   }
-  return closest === null ? closest : (closest.body?.position ?? closest);
+  return closest === null ? closest : closest.body?.position ?? closest;
 };

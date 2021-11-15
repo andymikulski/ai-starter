@@ -1,8 +1,12 @@
-import Phaser from 'phaser';
-import { Action, BehaviorStatus } from '../base/BehaviorTree';
+import Phaser from "phaser";
+import { Action, BehaviorStatus } from "../base/BehaviorTree";
 
 class EmitParticle extends Action {
-  constructor(private emitter: Phaser.GameObjects.Particles.ParticleEmitter, private from: { x: number; y: number; }, private to: { x: number; y: number; }) {
+  constructor(
+    private emitter: Phaser.GameObjects.Particles.ParticleEmitter,
+    private from: { x: number; y: number },
+    private to: { x: number; y: number }
+  ) {
     super();
   }
 

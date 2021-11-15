@@ -1,7 +1,7 @@
-import { Action, BehaviorStatus } from '../base/BehaviorTree';
+import { Action, BehaviorStatus } from "../base/BehaviorTree";
 
 export class SetAmmo extends Action {
-  constructor(private entity: { ammo: number; }, private amount: number) {
+  constructor(private entity: { ammo: number }, private amount: number) {
     super();
   }
   onInitialize() {
@@ -12,4 +12,3 @@ export class SetAmmo extends Action {
     return BehaviorStatus.SUCCESS;
   }
 }
-;

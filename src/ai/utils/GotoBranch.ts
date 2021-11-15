@@ -1,7 +1,10 @@
-import { Action, BehaviorStatus, BehaviorTree } from '../base/BehaviorTree';
+import { Action, BehaviorStatus, BehaviorTree } from "../base/BehaviorTree";
 
 export class GotoBranch extends Action {
-  constructor(private self: { ai: BehaviorTree; }, private target: BehaviorTree) {
+  constructor(
+    private self: { ai: BehaviorTree },
+    private target: BehaviorTree
+  ) {
     super();
   }
   update() {
@@ -9,4 +12,3 @@ export class GotoBranch extends Action {
     return BehaviorStatus.SUCCESS;
   }
 }
-;

@@ -1,6 +1,5 @@
-import Phaser from 'phaser';
-import { Action, BehaviorStatus } from '../base/BehaviorTree';
-
+import Phaser from "phaser";
+import { Action, BehaviorStatus } from "../base/BehaviorTree";
 
 export class SetAnimationSpeed extends Action {
   constructor(private self: Phaser.GameObjects.Sprite, private amt: number) {

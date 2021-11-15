@@ -2,10 +2,14 @@ import { Composite, BehaviorStatus, Behavior } from "./BehaviorTree";
 
 export enum ParallelPolicy {
   RequireOne,
-  RequireAll
+  RequireAll,
 }
 export class Parallel extends Composite {
-  constructor(protected successPolicy: ParallelPolicy, protected failurePolicy: ParallelPolicy, protected children:Behavior[]) {
+  constructor(
+    protected successPolicy: ParallelPolicy,
+    protected failurePolicy: ParallelPolicy,
+    protected children: Behavior[]
+  ) {
     super();
   }
 
@@ -36,13 +40,19 @@ export class Parallel extends Composite {
       }
     }
 
-    if (this.failurePolicy === ParallelPolicy.RequireAll && failureCount === totalCount) {
+    if (
+      this.failurePolicy === ParallelPolicy.RequireAll &&
+      failureCount === totalCount
+    ) {
       return BehaviorStatus.FAILURE;
-    } else if (this.successPolicy === ParallelPolicy.RequireAll && successCount === totalCount) {
+    } else if (
+      this.successPolicy === ParallelPolicy.RequireAll &&
+      successCount === totalCount
+    ) {
       return BehaviorStatus.SUCCESS;
     }
     return BehaviorStatus.RUNNING;
-  };
+  }
 
   public onTerminate = () => {
     super.onTerminate();

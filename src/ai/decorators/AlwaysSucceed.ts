@@ -1,5 +1,4 @@
-import { BehaviorStatus, Decorator } from '../base/BehaviorTree';
-
+import { BehaviorStatus, Decorator } from "../base/BehaviorTree";
 
 export class AlwaysSucceed extends Decorator {
   update() {

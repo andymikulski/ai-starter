@@ -1,5 +1,4 @@
-import { BehaviorStatus, Decorator } from '../base/BehaviorTree';
-
+import { BehaviorStatus, Decorator } from "../base/BehaviorTree";
 
 export class Inverter extends Decorator {
   tick() {
@@ -7,6 +6,8 @@ export class Inverter extends Decorator {
     if (childStatus === BehaviorStatus.RUNNING) {
       return BehaviorStatus.RUNNING;
     }
-    return childStatus === BehaviorStatus.SUCCESS ? BehaviorStatus.FAILURE : BehaviorStatus.SUCCESS;
+    return childStatus === BehaviorStatus.SUCCESS
+      ? BehaviorStatus.FAILURE
+      : BehaviorStatus.SUCCESS;
   }
 }

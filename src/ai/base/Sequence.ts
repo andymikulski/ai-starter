@@ -2,7 +2,6 @@ import { Composite, BehaviorStatus } from "./BehaviorTree";
 
 // ex Composite (pg 79) ("AND")
 
-
 /**
  * Continues from last processing node regardless if aborted
  */
@@ -35,7 +34,6 @@ export class Sequence extends Composite {
     this.onTerminate();
   }
 }
-
 
 /**
  * Starts the sequence over when aborted

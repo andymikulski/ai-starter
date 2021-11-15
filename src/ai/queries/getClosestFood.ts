@@ -1,10 +1,17 @@
-import Phaser from 'phaser';
-import Blackboard from '../base/Blackboard';
+import Phaser from "phaser";
+import Blackboard from "../base/Blackboard";
 
-
-export const getClosestFood = (blackboard: Blackboard, position: { x: number; y: number; }, maxDistance: number): null | Phaser.GameObjects.Components.Transform => {
-  const food = blackboard.getTagged('food') as Phaser.GameObjects.Components.Transform[];
-  if (!food.length) { return null; }
+export const getClosestFood = (
+  blackboard: Blackboard,
+  position: { x: number; y: number },
+  maxDistance: number
+): null | Phaser.GameObjects.Components.Transform => {
+  const food = blackboard.getTagged(
+    "food"
+  ) as Phaser.GameObjects.Components.Transform[];
+  if (!food.length) {
+    return null;
+  }
 
   let dist;
   let closestDist = Infinity;
@@ -12,7 +19,9 @@ export const getClosestFood = (blackboard: Blackboard, position: { x: number; y:
   for (let i = 0; i < food.length; i++) {
     dist = Phaser.Math.Distance.BetweenPoints(food[i], position);
 
-    if (dist > closestDist || dist > maxDistance) { continue; }
+    if (dist > closestDist || dist > maxDistance) {
+      continue;
+    }
     if (dist < closestDist) {
       closestDist = dist;
       nearestFood = food[i];
